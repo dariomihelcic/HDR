@@ -11,8 +11,8 @@
   <arg name="depth" default="true"/>
   <arg name="no_point_clouds" default="false" />
   <arg name="front_rgbd" default="true"/>
-  <arg name="rear_rgbd" default="false"/>
-  <arg name="laser" default="false"/>
+  <arg name="rear_rgbd" default="true"/>
+  <arg name="laser" default="true"/>
   <arg name="uncompress_rgbd" default="true"/>
   <arg name="tracked_persons" default="true"/>
   <arg name="velodyne" default="false"/>
@@ -52,9 +52,23 @@
     <remap if="$(arg uncompress_rgbd)" from="/spencer/sensors/rgbd_front_top/depth/image_raw/compressedDepth" to="/spencer/sensors/rgbd_front_top/depth_recorded/image_raw/compressedDepth"/>
     <remap if="$(arg uncompress_rgbd)" from="/spencer/sensors/rgbd_front_top/rgb/image_raw/compressed"    to="/spencer/sensors/rgbd_front_top/rgb_recorded/image_color/compressed"/>
 
+    <remap if="$(arg uncompress_rgbd)" from="/spencer/sensors/rgbd_front_bottom/depth/image_raw/compressedDepth" to="/spencer/sensors/rgbd_front_bottom/depth_recorded/image_raw/compressedDepth"/>
+    <remap if="$(arg uncompress_rgbd)" from="/spencer/sensors/rgbd_front_bottom/rgb/image_raw/compressed"    to="/spencer/sensors/rgbd_front_bottom/rgb_recorded/image_color/compressed"/>
+
+    <remap if="$(arg uncompress_rgbd)" from="/spencer/sensors/rgbd_rear_top/depth/image_raw/compressedDepth" to="/spencer/sensors/rgbd_rear_top/depth_recorded/image_raw/compressedDepth"/>
+    <remap if="$(arg uncompress_rgbd)" from="/spencer/sensors/rgbd_rear_top/rgb/image_raw/compressed"    to="/spencer/sensors/rgbd_rear_top/rgb_recorded/image_color/compressed"/>
+
+    <remap if="$(arg uncompress_rgbd)" from="/spencer/sensors/rgbd_rear_bottom/depth/image_raw/compressedDepth" to="/spencer/sensors/rgbd_rear_bottom/depth_recorded/image_raw/compressedDepth"/>
+    <remap if="$(arg uncompress_rgbd)" from="/spencer/sensors/rgbd_rear_bottom/rgb/image_raw/compressed"    to="/spencer/sensors/rgbd_rear_bottom/rgb_recorded/image_color/compressed"/>
+
+
     <!-- Hack if uncompressed depth/image_rect was recorded instead of depth/image_raw as recommended at http://wiki.ros.org/openni_launch/Tutorials/BagRecordingPlayback -->
     <remap unless="$(arg uncompress_rgbd)" from="/spencer/sensors/rgbd_front_top/depth/image_rect" to="/spencer/sensors/rgbd_front_top/depth/image_raw"/>
     <remap unless="$(arg uncompress_rgbd)" from="/spencer/sensors/rgbd_front_bottom/depth/image_rect" to="/spencer/sensors/rgbd_front_bottom/depth/image_raw"/>
+
+    <remap unless="$(arg uncompress_rgbd)" from="/spencer/sensors/rgbd_rear_top/depth/image_rect"  to="/spencer/sensors/rgbd_rear_top/depth/image_raw"/>
+    <remap unless="$(arg uncompress_rgbd)" from="/spencer/sensors/rgbd_rear_bottom/depth/image_rect"  to="/spencer/sensors/rgbd_rear_bottom/depth/image_raw"/>
+
 
     <!-- This script launches either rosbag play or rqt_bag, and searches for all relevant bag files for the active sensor modalities in the given folder -->
     <node name="playback_wrapper" pkg="spencer_bagfile_tools" type="play.py" output="screen" required="$(arg required)" ns="/spencer/sensors" clear_params="true"> <!-- sub-namespace only applied for relative topic names in bagfile -->
@@ -90,14 +104,38 @@
       <include file="$(find spencer_bagfile_tools)/launch/components/uncompress_rgbd.launch">
         <arg name="sensor_name" value="rgbd_front_top"/>
       </include>
+      <include file="$(find spencer_bagfile_tools)/launch/components/uncompress_rgbd.launch">
+        <arg name="sensor_name" value="rgbd_front_bottom"/>
+      </include>
+      <include file="$(find spencer_bagfile_tools)/launch/components/uncompress_rgbd.launch">
+        <arg name="sensor_name" value="rgbd_rear_top"/>
+      </include>
+      <include file="$(find spencer_bagfile_tools)/launch/components/uncompress_rgbd.launch">
+        <arg name="sensor_name" value="rgbd_rear_bottom"/>
+      </include>
     </group>
 
     <!-- Generate point clouds -->
     <group unless="$(arg no_point_clouds)" ns="/spencer/sensors/">
       <!-- Front sensors -->
+      <group if="$(arg front_rgbd)">
         <include file="$(find spencer_bagfile_tools)/launch/components/generate_pointcloud.launch">
           <arg name="sensor_name" value="rgbd_front_top"/>
-        </include>>
+        </include>
+        <include file="$(find spencer_bagfile_tools)/launch/components/generate_pointcloud.launch">
+          <arg name="sensor_name" value="rgbd_front_bottom"/>
+        </include>
+      </group>
+
+      <!-- Rear sensors -->
+      <group if="$(arg rear_rgbd)">
+        <include file="$(find spencer_bagfile_tools)/launch/components/generate_pointcloud.launch">
+          <arg name="sensor_name" value="rgbd_rear_top"/>
+        </include>
+        <include file="$(find spencer_bagfile_tools)/launch/components/generate_pointcloud.launch">
+          <arg name="sensor_name" value="rgbd_rear_bottom"/>
+        </include>
+      </group>
     </group>
   </group>
 
@@ -110,6 +148,17 @@
       <arg name="camera" value="rgbd_front_top"/>
     </include>
 
+    <include file="$(find spencer_bagfile_tools)/launch/components/relay_rgbd_for_visualization.launch">
+      <arg name="camera" value="rgbd_front_bottom"/>
+    </include>
+
+    <include file="$(find spencer_bagfile_tools)/launch/components/relay_rgbd_for_visualization.launch">
+      <arg name="camera" value="rgbd_rear_top"/>
+    </include>
+
+      <include file="$(find spencer_bagfile_tools)/launch/components/relay_rgbd_for_visualization.launch">
+      <arg name="camera" value="rgbd_rear_bottom"/>
+    </include>
   </group>
 
 
@@ -117,9 +166,12 @@
   <group if="$(arg panoramas)" ns="/spencer/sensors">
     <node if="$(arg front_rgbd)" name="panorama_rgb_front" pkg="spencer_bagfile_tools" type="panorama_builder" args="_topics:='/spencer/sensors/rgbd_front_top/rgb /spencer/sensors/rgbd_front_bottom/rgb' _inplane_rotations:='0.0 180.0' _vertical:=true _output_topic:='/spencer/sensors/rgbd_front_panorama/rgb'"/>
 
+    <node if="$(arg rear_rgbd)" name="panorama_rgb_rear" pkg="spencer_bagfile_tools" type="panorama_builder" args="_topics:='/spencer/sensors/rgbd_rear_top/rgb /spencer/sensors/rgbd_rear_bottom/rgb' _inplane_rotations:='0.0 180.0' _vertical:=true _output_topic:='/spencer/sensors/rgbd_rear_panorama/rgb'"/>
+
     <group if="$(arg depth)">
       <node if="$(arg front_rgbd)" name="panorama_depth_front" pkg="spencer_bagfile_tools" type="panorama_builder" args="_topics:='/spencer/sensors/rgbd_front_top/depth /spencer/sensors/rgbd_front_bottom/depth' _inplane_rotations:='0.0 180.0' _vertical:=true _output_topic:='/spencer/sensors/rgbd_front_panorama/depth'"/>
 
+      <node if="$(arg rear_rgbd)" name="panorama_depth_rear" pkg="spencer_bagfile_tools" type="panorama_builder" args="_topics:='/spencer/sensors/rgbd_rear_top/depth /spencer/sensors/rgbd_rear_bottom/depth' _inplane_rotations:='0.0 180.0' _vertical:=true _output_topic:='/spencer/sensors/rgbd_rear_panorama/depth'"/>
     </group>
   </group>
 

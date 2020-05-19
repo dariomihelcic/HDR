@@ -1,7 +1,7 @@
-<launch>
-    <arg name="bagfile_folder" default="$(env HOME)/.ros/spencer_tracking_rgbd_2dlaser_example_bagfiles/"/> <!-- download using script in scripts/ folder -->
+ <launch>
+    <arg name="bagfile_folder" default="$(env HOME)/.ros/spencer_tracking_rgbd_2dlaser_example_bagfiles/"/>
 
-    <arg name="front_laser" default="true"/>
+    <arg name="front_laser" default="false"/>
     <arg name="front_rgbd" default="true"/>
     
     <arg name="rear_rgbd" default="false"/>
@@ -19,8 +19,61 @@
     <arg name="rate" default="0.2"/>
 
     <arg name="visualization" default="true"/>
-    <arg name="rviz_config_file" default="$(find spencer_people_tracking_launch)/rviz/tracking-rgbd-laser.rviz"/>
+    <arg name="rviz_config_file" default="$(find spencer_people_tracking_launch)/rviz/tracking-rgbd-laser.rviz"  unless="$(arg ds)"/>
+    <arg name="rviz_config_file" default="$(find spencer_people_tracking_launch)/rviz/tracking-rgbd-robotarm-sim.rviz" if="$(arg ds)"/>
 
+    <arg name="height_above_ground" default="1.6"/>
+    <arg name="ds" default="false"/>
+	
+    <!-- added-->
+    <group if="$(arg ds)">
+		<rosparam param="/spencer/perception_internal/people_detection/ground_plane/distance"
+							subst_value="true">$(arg height_above_ground)</rosparam>
+		<remap from="/spencer/sensors/pose" to="/odom"/>
+		<node name="relay_odom" type="relay" pkg="topic_tools" 
+					args="/odom /spencer/sensors/odom"/>
+
+		<!--Change the names of topis from the dataset to the right topic names for the method-->
+		<node name="republish_rgb" type="republish" pkg="image_transport" 
+					args="compressed in:=/spencer/sensors/camera/rgb/image_color
+					raw out:=/spencer/sensors/rgbd_front_top/rgb/image_rect_color"/>
+		<node name="relay_depth" type="relay" pkg="topic_tools"
+					args="/spencer/sensors/camera/depth/image
+					/spencer/sensors/rgbd_front_top/depth/image_rect"/>
+		<node name="relay_rgb_camera_info" type="relay" pkg="topic_tools"
+					args="/spencer/sensors/camera/rgb/camera_info 
+					/spencer/sensors/rgbd_front_top/rgb/camera_info"/>
+		<node name="relay_depth_camera_info" type="relay" pkg="topic_tools" 
+					args="/spencer/sensors/camera/rgb/camera_info 
+					spencer/sensors/rgbd_front_top/depth/camera_info"/>
+
+		<!--TODO: fix topic relay for visualization.>
+		<node name="relay_depth_rect" type="relay" pkg="topic_tools" args="/spencer/sensors/rgbd_front_top/depth/image_rect /spencer/sensors/rgbd_front_top/depth_registered/image_rect"/>
+		<node name="relay_depth_camera_info_2" type="relay" pkg="topic_tools" args="/spencer/sensors/rgbd_front_top/depth/camera_info /spencer/sensors/rgbd_front_top/depth_registered/camera_info"/>
+		<node name="relay_depth_raw" type="relay" pkg="topic_tools" args="/spencer/sensors/rgbd_front_top/depth/image_rect /spencer/sensors/rgbd_front_top/depth/image_raw"/-->
+
+		<!-- Set up dummy transforms into an imaginary robot and odom frame -->
+		<node name="tf_openni"         pkg="tf" type="static_transform_publisher" 
+					args="0 0 0 -1.570796 0 -1.570796 rgbd_front_top_link openni_rgb_optical_frame 10"/>
+		<node name="tf_base_footprint" pkg="tf" type="static_transform_publisher" 
+					args="0 0 $(arg height_above_ground) 0 0 0 base_footprint rgbd_front_top_link 10"/>	
+		<node name="tf_map"         pkg="tf" type="static_transform_publisher" 
+					args="0 0 0 0 0 0 1 base_footprint map 10"/>
+		<node name="tf_odom"           pkg="tf" type="static_transform_publisher" 
+					args="0 0 0 0 0 0 odom base_footprint 10"/>
+		
+		<!--add robot simulation-->
+
+		<node name="tf_robot" pkg="tf" type="static_transform_publisher" args="2 -2 0 1.570796 0 0 map katana_base_link 10"/>
+
+		<param name="robot_description" command="$(find xacro)/xacro --inorder '$(find spencer_people_tracking_launch)/launch/robot_desc.urdf.xacro'"/>
+		<param name="use_gui" value="true"/>
+
+  		<node name="joint_state_publisher" pkg="joint_state_publisher" type="joint_state_publisher"/>
+
+  		<node name="robot_state_publisher" pkg="robot_state_publisher" type="state_publisher"/>
+		
+    </group>	
 
     <!-- Bagfile playback -->
     <include file="$(find spencer_bagfile_tools)/launch/playback_from_robot.launch">
@@ -30,7 +83,8 @@
             <arg name="front_rgbd" value="$(arg front_rgbd)"/>
             <arg name="rear_rgbd" value="$(arg rear_rgbd)"/>
             <arg name="remap_tf" value="true"/>
-
+			<!-- Data in dataset is not compressed.-->
+			<arg name="uncompress_rgbd" value="false" if="$(arg ds)"/>
         <!-- We could also supply individual filenames instead. In that case, it is easiest if all topics were recorded into the same bagfile. -->
         <!-- <arg name="files" value="$(find bagfile_folder)/mybagfile.bag"/> -->
 
@@ -53,16 +107,6 @@
         <arg name="hog" value="$(arg use_hog_detector)"/>
     </include>
 
-    <include file="$(find spencer_people_tracking_launch)/launch/detectors/rear_rgbd_detectors.launch" if="$(arg rear_rgbd)">
-        <arg name="upper_body" value="$(arg use_upper_body_detector)"/>
-        <arg name="pcl_detector" value="$(arg use_pcl_detector)"/>
-        <arg name="hog" value="$(arg use_hog_detector)"/>
-    </include>
-
-    <include file="$(find spencer_people_tracking_launch)/launch/detectors/laser_detectors.launch" if="$(arg front_laser)">
-        <arg name="rear" value="$(arg rear_laser)"/>
-    </include> 
-
 
     <!-- People tracking -->
     <include file="$(find spencer_people_tracking_launch)/launch/tracking/freiburg_people_tracking.launch">
@@ -80,6 +124,6 @@
     </group>
 
     <!-- Group tracking -->
-    <include file="$(find spencer_people_tracking_launch)/launch/tracking/group_tracking.launch"/> 
+    <!--include file="$(find spencer_people_tracking_launch)/launch/tracking/group_tracking.launch"--> 
 
 </launch>

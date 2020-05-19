@@ -131,7 +131,7 @@ rqt        = rospy.get_param('~rqt', False);
 # Additional arguments to rosbag play
 pause       = rospy.get_param('~pause', False);
 loop        = rospy.get_param('~loop', False);
-rosbag_args = rospy.get_param('~rosbag_play_args', '--clock --queue=5');
+rosbag_args = rospy.get_param('~rosbag_play_args', '--clock --queue=60');
 
 if pause:
     rosbag_args += " --pause"
