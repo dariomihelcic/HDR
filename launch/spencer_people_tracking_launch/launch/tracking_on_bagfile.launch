@@ -24,7 +24,36 @@
 
     <arg name="height_above_ground" default="1.6"/>
     <arg name="ds" default="false"/>
-	
+	 <arg name="v_ds" default="false"/>
+	 
+    <group if="$(arg v_ds)">	 
+		<remap from="/spencer/sensors/pose" to="/odom"/>
+		<node name="relay_odom" type="relay" pkg="topic_tools" 
+					args="/odom /spencer/sensors/odom"/>
+		<rosparam param="/spencer/perception_internal/people_detection/ground_plane/distance"
+							subst_value="true">$(arg height_above_ground)</rosparam>
+		<node name="tf_base_footprint" pkg="tf" type="static_transform_publisher" args="0 0 $(arg height_above_ground) 0 0 0 base_footprint rgbd_front_top_link 10"/>
+        <node name="tf_odom"           pkg="tf" type="static_transform_publisher" args="0 0 0 0 0 0 odom base_footprint 10"/>
+		<node name="tf_depth"         pkg="tf" type="static_transform_publisher" 
+			args="0 0 0 -1.570796 0 -1.570796 rgbd_front_top_link camera_depth_optical_frame 10"/>
+		<node name="tf_rbg"         pkg="tf" type="static_transform_publisher" 
+			args="0 0 0 0 0 0 rgbd_front_top_link camera_rgb_optical_frame 10"/>
+			
+		
+		<node name="relay_depth" type="relay" pkg="topic_tools"
+					args="/spencer/sensors/camera/depth/image_raw
+								/spencer/sensors/rgbd_front_top/depth/image_raw"/>
+		<node name="relay_rgb" type="relay" pkg="topic_tools"
+					args="/spencer/sensors/camera/rgb/image_raw
+								/spencer/sensors/rgbd_front_top/rgb/image_raw"/>
+		<node name="relay_rgb_camera_info" type="relay" pkg="topic_tools"
+					args="/spencer/sensors/camera/rgb/camera_info 
+								/spencer/sensors/rgbd_front_top/rgb/camera_info"/>
+		<node name="relay_depth_camera_info" type="relay" pkg="topic_tools" 
+					args="/spencer/sensors/camera/depth/camera_info 
+								/spencer/sensors/rgbd_front_top/depth/camera_info"/>
+							
+    </group>	 
     <!-- added-->
     <group if="$(arg ds)">
 		<rosparam param="/spencer/perception_internal/people_detection/ground_plane/distance"
@@ -36,21 +65,35 @@
 		<!--Change the names of topis from the dataset to the right topic names for the method-->
 		<node name="republish_rgb" type="republish" pkg="image_transport" 
 					args="compressed in:=/spencer/sensors/camera/rgb/image_color
-					raw out:=/spencer/sensors/rgbd_front_top/rgb/image_rect_color"/>
+											raw out:=/spencer/sensors/rgbd_front_top/rgb/image_rect_color"/>
 		<node name="relay_depth" type="relay" pkg="topic_tools"
 					args="/spencer/sensors/camera/depth/image
-					/spencer/sensors/rgbd_front_top/depth/image_rect"/>
+								/spencer/sensors/rgbd_front_top/depth/image_rect"/>
 		<node name="relay_rgb_camera_info" type="relay" pkg="topic_tools"
 					args="/spencer/sensors/camera/rgb/camera_info 
-					/spencer/sensors/rgbd_front_top/rgb/camera_info"/>
+								/spencer/sensors/rgbd_front_top/rgb/camera_info"/>
 		<node name="relay_depth_camera_info" type="relay" pkg="topic_tools" 
 					args="/spencer/sensors/camera/rgb/camera_info 
-					spencer/sensors/rgbd_front_top/depth/camera_info"/>
+								/spencer/sensors/rgbd_front_top/depth/camera_info"/>
 
-		<!--TODO: fix topic relay for visualization.>
-		<node name="relay_depth_rect" type="relay" pkg="topic_tools" args="/spencer/sensors/rgbd_front_top/depth/image_rect /spencer/sensors/rgbd_front_top/depth_registered/image_rect"/>
-		<node name="relay_depth_camera_info_2" type="relay" pkg="topic_tools" args="/spencer/sensors/rgbd_front_top/depth/camera_info /spencer/sensors/rgbd_front_top/depth_registered/camera_info"/>
-		<node name="relay_depth_raw" type="relay" pkg="topic_tools" args="/spencer/sensors/rgbd_front_top/depth/image_rect /spencer/sensors/rgbd_front_top/depth/image_raw"/-->
+		
+		<!--node name="relay_depth_viz" type="relay" pkg="topic_tools" 
+					args="/spencer/sensors/rgbd_front_top/depth/image_rect 
+								/spencer/sensors/rgbd_front_top/depth_registered/image_raw"/>
+		<node name="relay_depth_camera_info_2" type="relay" pkg="topic_tools" 
+					args="/spencer/sensors/rgbd_front_top/depth/camera_info 
+								/spencer/sensors/rgbd_front_top/depth_registered/camera_info"/-->
+								
+		<node name="sync_data" pkg="spencer_bagfile_tools" type="sync_data"/>
+		
+		<!--TODO: fix topic relay for visualization.-->
+		<node name="relay_depth_raw" type="relay" pkg="topic_tools" 
+					args="/spencer/sensors/rgbd_front_top/rgb/image_rect_color
+								/spencer/sensors/rgbd_front_top/rgb/image_raw"/>
+		<node name="relay_rgb_raw" type="relay" pkg="topic_tools" 
+					args="/spencer/sensors/rgbd_front_top/depth/image_rect 
+								/spencer/sensors/rgbd_front_top/depth/image_raw"/>
+		
 
 		<!-- Set up dummy transforms into an imaginary robot and odom frame -->
 		<node name="tf_openni"         pkg="tf" type="static_transform_publisher" 
@@ -72,6 +115,9 @@
   		<node name="joint_state_publisher" pkg="joint_state_publisher" type="joint_state_publisher"/>
 
   		<node name="robot_state_publisher" pkg="robot_state_publisher" type="state_publisher"/>
+		
+		<!--TODO::write postions to file (location /.ros/)-->
+		<!--node name="dump_positions" pkg="spencer_detected_person_association" type="dump_detection_positions.py" /-->
 		
     </group>	
 
