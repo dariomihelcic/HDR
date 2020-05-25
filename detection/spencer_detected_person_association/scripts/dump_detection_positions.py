@@ -63,7 +63,7 @@ if __name__ == '__main__':
 
     global csvFile
     csvFile = open('detected_person_positions.txt','w')
-    csvFile.write("ros_x\tros_y\tros_z\ttimestamp")
+    csvFile.write("ros_x\tros_y\tros_z\ttimestamp\n")
 
     global tfListener
     tfListener = tf.TransformListener()
@@ -71,10 +71,10 @@ if __name__ == '__main__':
     global firstMessageOK
     firstMessageOK = False
 
-    detectedPersonsTopic = "detected_persons"
+    detectedPersonsTopic = "spencer/perception/detected_persons"
     detectedPersonsSubscriber = rospy.Subscriber(detectedPersonsTopic, DetectedPersons, newDetectedPersonsAvailable, queue_size=500)
 
-    rospy.loginfo("Dumping detected persons on topic %s to CSV file!" % (detectedPersonsTopic))
+    rospy.loginfo("V 2.0. Dumping detected persons on topic %s to CSV file!" % (detectedPersonsTopic))
     rospy.spin()
 
     csvFile.close()

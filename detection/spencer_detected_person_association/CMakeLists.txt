@@ -76,7 +76,7 @@ install(TARGETS ${PROJECT_NAME}
 
 install(DIRECTORY launch/
   DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}/launch
-  PATTERN ".svn" EXCLUDE
+  PATTERN ".svn" EXCLUDEf
 )
 
 install(FILES nodelet_plugins.xml
@@ -89,5 +89,6 @@ catkin_install_python(PROGRAMS
   scripts/dump_detection_positions.py
   scripts/track_synchronizer_test.py
   scripts/visualize_composite_detections.py
+  scripts/monitored_safe_stop.py
   DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
 )
