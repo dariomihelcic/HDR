@@ -22,6 +22,8 @@
         </include>
     </group>
 
+	<!--Monitored safe stop-->
+	<node name="monitored_safe_stop" type="monitored_safe_stop.py" pkg="spencer_detected_person_association"/>
 
     <!-- Set ground plane distance -->
     <rosparam param="/spencer/perception_internal/people_detection/ground_plane/distance" subst_value="true">$(arg height_above_ground)</rosparam>
@@ -32,6 +34,16 @@
         <node name="tf_odom"           pkg="tf" type="static_transform_publisher" args="0 0 0 0 0 0 odom base_footprint 10"/>
     </group>
 
+	<group>
+		<node name="tf_robot" pkg="tf" type="static_transform_publisher" args="2 -2 0 1.570796 0 0 odom katana_base_link 10"/>
+
+		<param name="robot_description" command="$(find xacro)/xacro --inorder '$(find spencer_people_tracking_launch)/launch/robot_desc.urdf.xacro'"/>
+		<param name="use_gui" value="true"/>
+
+		<node name="joint_state_publisher" pkg="joint_state_publisher" type="joint_state_publisher"/>
+
+		<node name="robot_state_publisher" pkg="robot_state_publisher" type="state_publisher"/>
+	</group>
 
     <!-- Detectors -->
     <group>
@@ -47,7 +59,6 @@
             <arg name="hog" default="$(arg use_hog_detector)"/>
         </include>
     </group>
-    
 
     <!-- People tracking -->
     <include file="$(find spencer_people_tracking_launch)/launch/tracking/freiburg_people_tracking.launch">

@@ -31,7 +31,7 @@
 cmake_minimum_required(VERSION 2.8.3)
 project(spencer_bagfile_tools)
 
-find_package(catkin REQUIRED COMPONENTS roscpp std_msgs geometry_msgs nav_msgs image_transport image_geometry cv_bridge tf message_generation dynamic_reconfigure camera_calibration_parsers)
+find_package(catkin REQUIRED COMPONENTS roscpp std_msgs geometry_msgs nav_msgs image_transport image_geometry cv_bridge tf message_generation dynamic_reconfigure camera_calibration_parsers rgbd_benchmark_tools)
 
 add_message_files(
    FILES
