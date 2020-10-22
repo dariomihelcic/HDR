@@ -219,7 +219,14 @@ void pointCloudCallback(const sensor_msgs::PointCloud2::Ptr& msg)
 
     // Convert cloud into PCL format
     pcl::fromROSMsg(*msg, *g_cloud);
-
+	
+	//std::vector<int> indices;
+	//pcl::removeNaNFromPointCloud(*g_cloud, *g_cloud, indices);
+	//for(int i=0; i<g_cloud->points.size(); ++i){
+	//		if(std::isnan(g_cloud->points[i].x) || std::isnan(g_cloud->points[i].y) || std::isnan(g_cloud->points[i].z))
+	//			std::cout<<"FOUND A NAN"<<std::endl;
+	//}
+	
     // cameraTransform is from optical frame to base_link
     // baseLinkToDetectionFrame is from base_link into an y-pointing-down reference frame
     Eigen::Affine3d cameraToDetectionFrame = baseLinkToDetectionFrame * cameraTransform;
@@ -256,6 +263,7 @@ void pointCloudCallback(const sensor_msgs::PointCloud2::Ptr& msg)
 
     for (Clusters::iterator it = clusters.begin(); it != clusters.end(); ++it) {
         double confidence = it->getPersonConfidence();
+		//std::cout<<confidence<<std::endl;
         if (confidence > g_minConfidence)             // draw only people with confidence above a threshold
         {
             clustersWithinConfidenceBounds.push_back(*it);
@@ -374,7 +382,7 @@ void pointCloudCallback(const sensor_msgs::PointCloud2::Ptr& msg)
     //
 
     // All voxels above ground
-    if(g_noGroundCloudPublisher.getNumSubscribers()) {
+    if(1) {
         PointCloudType::Ptr noGroundCloud = g_people_detector.getNoGroundCloud();
         sensor_msgs::PointCloud2 noGroundCloudROS;
         pcl::toROSMsg(*noGroundCloud, noGroundCloudROS);
@@ -478,6 +486,7 @@ int main (int argc, char** argv)
 
   // Check if OpenCV was compiled with CUDA support
   if(gpu_classifier && 0 == cv::gpu::getCudaEnabledDeviceCount()) {
+	  
     gpu_classifier = false;
     ROS_ERROR_STREAM("OpenCV was compiled without GPU (CUDA) support. Overriding gpu_classifier parameter and setting it to False.");
   }

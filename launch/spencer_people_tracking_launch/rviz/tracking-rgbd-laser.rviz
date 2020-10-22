@@ -51,24 +51,6 @@ Visualization Manager:
       Plane Cell Count: 20
       Reference Frame: base_footprint
       Value: true
-    - Alpha: 0.5
-      Cell Size: 0.100000001
-      Class: rviz/Grid
-      Color: 175; 175; 180
-      Enabled: true
-      Line Style:
-        Line Width: 0.0299999993
-        Value: Lines
-      Name: Fine Grid
-      Normal Cell Count: 0
-      Offset:
-        X: 0
-        Y: 0
-        Z: 0
-      Plane: XY
-      Plane Cell Count: 200
-      Reference Frame: base_footprint
-      Value: true
     - Class: rviz/TF
       Enabled: true
       Frame Timeout: 15
@@ -76,9 +58,17 @@ Visualization Manager:
         All Enabled: false
         base_footprint:
           Value: true
+        base_link:
+          Value: true
+        camera_depth_optical_frame:
+          Value: true
         camera_rgb_optical_frame:
           Value: true
+        map:
+          Value: true
         odom:
+          Value: true
+        pcl_people_detector_front_link:
           Value: true
         rgbd_front_top_depth_frame:
           Value: false
@@ -98,7 +88,15 @@ Visualization Manager:
       Tree:
         odom:
           base_footprint:
+            base_link:
+              {}
+            map:
+              {}
+            pcl_people_detector_front_link:
+              {}
             rgbd_front_top_link:
+              camera_depth_optical_frame:
+                {}
               camera_rgb_optical_frame:
                 {}
               rgbd_front_top_depth_frame:
@@ -227,70 +225,6 @@ Visualization Manager:
               Transport Hint: raw
               Unreliable: false
               Value: true
-            - Alpha: 0.5
-              Class: spencer_tracking_rviz_plugin/DetectedPersons
-              Color: 255; 85; 0
-              Color map offset: 0
-              Color transform: Constant color
-              Enabled: true
-              Excluded person IDs: ""
-              Font color: 255; 255; 255
-              Font color style: Same color
-              Font scale: 1
-              Included person IDs: ""
-              Low-confidence alpha: 0.5
-              Low-confidence threshold: 0.5
-              Name: High-recall laser
-              Render confidences: false
-              Render covariances:
-                Line width: 0.100000001
-                Value: false
-              Render detection IDs: false
-              Render modality text: false
-              Render orientation arrows: false
-              Style:
-                Line width: 0.00999999978
-                Scaling factor: 0.970000029
-                Value: Bounding boxes
-              Text spacing: 1
-              Topic: /spencer/perception_internal/detected_persons/laser_front_high_recall
-              Unreliable: false
-              Value: true
-              Z offset:
-                Use Z position from message: false
-                Value: 0
-            - Alpha: 1
-              Class: spencer_tracking_rviz_plugin/DetectedPersons
-              Color: 255; 85; 0
-              Color map offset: 0
-              Color transform: Constant color
-              Enabled: true
-              Excluded person IDs: ""
-              Font color: 255; 255; 255
-              Font color style: Same color
-              Font scale: 1
-              Included person IDs: ""
-              Low-confidence alpha: 0.5
-              Low-confidence threshold: 0.5
-              Name: Laser
-              Render confidences: false
-              Render covariances:
-                Line width: 0.100000001
-                Value: false
-              Render detection IDs: false
-              Render modality text: false
-              Render orientation arrows: false
-              Style:
-                Line width: 0.00999999978
-                Scaling factor: 1
-                Value: Bounding boxes
-              Text spacing: 1
-              Topic: /spencer/perception_internal/detected_persons/laser_front
-              Unreliable: false
-              Value: true
-              Z offset:
-                Use Z position from message: false
-                Value: 0
           Enabled: true
           Name: Front
       Enabled: true
@@ -333,7 +267,7 @@ Visualization Manager:
       Color map offset: 0
       Color transform: Alternative SRL colors
       Delete after no. cycles: 2
-      Enabled: true
+      Enabled: false
       Excluded person IDs: ""
       Font color: 139; 139; 139
       Font color style: Same color
@@ -366,10 +300,17 @@ Visualization Manager:
         Value: Person meshes
       Topic: /spencer/perception/tracked_persons_confirmed_by_HOG_or_upper_body
       Unreliable: false
-      Value: true
+      Value: false
       Z offset:
         Use Z position from message: true
         Value: 0
+    - Class: rviz/Axes
+      Enabled: true
+      Length: 1
+      Name: Axes
+      Radius: 0.100000001
+      Reference Frame: <Fixed Frame>
+      Value: true
   Enabled: true
   Global Options:
     Background Color: 59; 59; 59

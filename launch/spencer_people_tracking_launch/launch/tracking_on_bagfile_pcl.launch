@@ -54,10 +54,15 @@
 								/spencer/sensors/rgbd_front_top/depth/camera_info"/>	
     </group>	
 	
-	<remap if="$(arg k31_ds)" from="/spencer/sensors/camera/rgb/image_color" to="/spencer/sensors/rgbd_front_top/rgb/image_rect_color"/>
+	<!--For PCL?-->
+	<remap if="$(arg k31_ds)" from="/spencer/sensors/camera/rgb/image_color" to="/spencer/sensors/rgbd_front_top/rgb/image_color"/>
+	
+	<!--remap if="$(arg k31_ds)" from="/spencer/sensors/camera/rgb/image_color" to="/spencer/sensors/rgbd_front_top/rgb/image_rect_color"/-->
 	<remap if="$(arg k31_ds)" from="/spencer/sensors/camera/depth_registered/camera_info" to="/spencer/sensors/rgbd_front_top/depth_registered/camera_info"/>
 	<remap if="$(arg k31_ds)" from="/spencer/sensors/camera/depth_registered/image" to="/spencer/sensors/rgbd_front_top/depth_registered/image_raw"/>
-	
+	<node name="relay_rgb_camera_info" type="relay" pkg="topic_tools"
+					args="/spencer/sensors/camera/rgb/camera_info 
+								/spencer/sensors/rgbd_front_top/rgb/camera_info"/>
 	<group if="$(arg k31_ds)">	 
 		<remap from="/spencer/sensors/pose" to="/odom"/>
 		<node name="relay_odom" type="relay" pkg="topic_tools" 
@@ -76,17 +81,28 @@
 		<node name="tf_rbg"         pkg="tf" type="static_transform_publisher" 
 			args="0 0 0 -1.570796 0 -1.570796 rgbd_front_top_link camera_rgb_optical_frame 10"/>
 			
+		<node name="tf_pcl" pkg="tf" type="static_transform_publisher" 
+			args="0 0 0 0 0 0 base_footprint base_link 10"/>
+		
+		<!--Shuld be published from pcl detector.-->
+		<!--node name="tf_pcl_detector_link" pkg="tf" type="static_transform_publisher" 
+			args="0 0 0 -1.570796 0 -1.570796 base_footprint pcl_people_detector_front_link 10"/-->
+		
+		<node name="relay_depth_raw" type="relay" pkg="topic_tools"
+					args="/spencer/sensors/rgbd_front_top/depth_registered/image_raw
+								/spencer/sensors/rgbd_front_top/depth/image_raw"/>
+			
+			
 		<node name="relay_depth" type="relay" pkg="topic_tools"
 					args="/spencer/sensors/rgbd_front_top/depth_registered/image_raw
 								/spencer/sensors/rgbd_front_top/depth/image_rect"/>
+		
 		<!--WARNING::wrong ecoding-->
 		<!--node name="relay_depth_raw" type="relay" pkg="topic_tools"
 					args="/spencer/sensors/rgbd_front_top/depth_registered/image_raw
 								/spencer/sensors/rgbd_front_top/depth/image_raw"/-->
 								
-		<node name="relay_rgb_camera_info" type="relay" pkg="topic_tools"
-					args="/spencer/sensors/camera/rgb/camera_info 
-								/spencer/sensors/rgbd_front_top/rgb/camera_info"/>
+		
 		<node name="relay_depth_camera_info" type="relay" pkg="topic_tools" 
 					args="/spencer/sensors/rgbd_front_top/depth_registered/camera_info 
 								/spencer/sensors/rgbd_front_top/depth/camera_info"/>

@@ -6,7 +6,7 @@ distance_range_accepted_detections = 7 # up to what distance detections are kept
 #=====================================
 # ROI
 #=====================================
-inc_width_ratio = 0.1
+inc_width_ratio = 0.2
 inc_height_ratio = 0.0
 region_size_threshold = 10
 
@@ -19,19 +19,19 @@ region_size_threshold = 10
 freespace_scaleZ = 20; 
 freespace_scaleX = 20;
 
-freespace_minX = -20;
+freespace_minX = -3;
 freespace_minZ = 0;
-freespace_maxX = 20;
-freespace_maxZ = 30;
-freespace_threshold = 325
-freespace_max_depth_to_cons = 20
+freespace_maxX = 3;
+freespace_maxZ = 7;
+freespace_threshold = 500
+freespace_max_depth_to_cons = 7
 
 #====================================
 # Detector
 #====================================
 # parameters upper body detector
 evaluation_NMS_threshold_LM = 0.25 # lowering this parameter will reduce the number of false positives! Keep in mind this is distance!
-evaluation_inc_height_ratio = 0.15  # parameter for increasing the size of ROI which is then scanned by the depth template
+evaluation_inc_height_ratio = 0.3  # parameter for increasing the size of ROI which is then scanned by the depth template
 
 # <<< these parameters are only relevant if you want to perform multi-scaling, evaluation_nr_scales > 1
 evaluation_stride = 3 

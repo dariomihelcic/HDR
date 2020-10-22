@@ -1,10 +1,12 @@
 <launch>
-    <arg name="input_topic" default="/camera/depth_registered/points"/>
+    <!--arg name="input_topic" default="/camera/depth_registered/points"/-->
+    <arg name="input_topic" default="/spencer/sensors/rgbd_front_top/depth_registered/points"/>
+
     <arg name="camera_info_topic" default="/camera/rgb/camera_info"/>
 
-    <arg name="ground_coeffs" default="0 0 1 1.6"/> <!-- n_x n_y n_z d. TODO: Verify that normal is correctly oriented. -->
+    <arg name="ground_coeffs" default="0 0 -1 1.6"/> <!-- n_x n_y n_z d. TODO: Verify that normal is correctly oriented. -->
     <arg name="min_person_height" default="1.2"/>
-    <arg name="max_person_height" default="2.0"/>
+    <arg name="max_person_height" default="2.3"/>
 
     <arg name="base_link_frame" default="base_link"/>
     <arg name="detection_frame" default="pcl_people_detector_frame"/>  <!-- Virtual frame that is published by the detector. Change only if running multiple instances. -->
@@ -13,7 +15,7 @@
     <arg name="detection_id_increment" default="1"/>
     <arg name="node_name" default="pcl_people_detector"/>
 
-    <arg name="rgb_visualization" default="false"/>
+    <arg name="rgb_visualization" default="true"/>
 
 
     <node name="$(arg node_name)" type="detect_people" pkg="pcl_people_detector" output="screen">
