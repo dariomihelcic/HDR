@@ -6,6 +6,8 @@
     <arg name="ground_plane" value="/spencer/sensors/rgbd_front_top/ground_plane"/>
 
     <arg name="detection_id_increment" default="20"/>
+	
+	<arg name="config_file" default="$(find rwth_upper_body_detector)/config/config_Asus.inp"/>
 
     <group ns="/spencer/perception_internal/people_detection">
 
@@ -27,6 +29,7 @@
             <arg name="ground_plane" value="$(arg ground_plane)" />
             <arg name="detection_id_offset" value="3"/>
             <arg name="detection_id_increment" value="$(arg detection_id_increment)"/>
+			<arg name="config_file" value="$(arg config_file)"/>
         </include>
 
         <!-- Front PCL detector (publishes on same topic as upper-body detector) -->

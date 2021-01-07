@@ -22,7 +22,7 @@
   <arg name="pause" default="true"/>
   <arg name="initial_wait_time" default="0.0" if="$(arg pause)"/>
   <arg name="initial_wait_time" default="45.0" unless="$(arg pause)"/>
-  <arg name="loop" default="false"/>
+  <arg name="loop" default="true"/>
   <arg name="start" default="0.0"/> <!-- seconds into the bagfile at which to start playing -->
   <arg name="duration" default="99999999.9"/> <!-- number of seconds to play -->
   <arg name="rate" default="1.0"/> <!-- playback speed -->

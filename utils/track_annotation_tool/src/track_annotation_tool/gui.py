@@ -33,7 +33,7 @@ import track_annotation_tool
 
 from qt_gui.plugin import Plugin
 from python_qt_binding import loadUi
-from python_qt_binding.QtGui import QWidget, QMessageBox, QFileDialog, QInputDialog
+from python_qt_binding.QtWidgets import QWidget, QMessageBox, QFileDialog, QInputDialog
 
 from spencer_human_attribute_msgs.msg import CategoricalAttribute
 from std_msgs.msg import Header

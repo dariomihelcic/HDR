@@ -4,7 +4,7 @@
     <arg name="load_driver" default="true"/>  <!-- set to false if you are already running OpenNi from elsewhere -->
     <arg name="visualization" default="true"/> <!-- start Rviz with predefined configuration? -->
     <arg name="dummy_transforms" default="true"/> <!-- publish TF transform for sensor to groundplane -->
-    <arg name="use_openni1" default="true"/> <!-- compatibility for Kinect v1 -->
+    <arg name="use_openni1" default="false"/> <!-- compatibility for Kinect v1 -->
     <arg name="use_upper_body_detector" default="true"/> <!-- use depth-template-based upper-body detector? -->
     <arg name="use_pcl_detector" default="false"/> <!-- use ROI-HOG detector from PCL? Cannot be combined with upper-body detector! -->
     <arg name="use_hog_detector" default="false"/> <!-- use RGB groundHOG detector? Requires cudaHOG library-->
@@ -32,6 +32,7 @@
     <group if="$(arg dummy_transforms)">
         <node name="tf_base_footprint" pkg="tf" type="static_transform_publisher" args="0 0 $(arg height_above_ground) 0 0 0 base_footprint rgbd_front_top_link 10"/>
         <node name="tf_odom"           pkg="tf" type="static_transform_publisher" args="0 0 0 0 0 0 odom base_footprint 10"/>
+		<node name="tf_robot"           pkg="tf" type="static_transform_publisher" args="2.4 -0.6 0 0 0 0 base_footprint robot 10"/>
     </group>
 
     <!-- Detectors -->
@@ -51,6 +52,7 @@
 
     <!-- People tracking -->
     <include file="$(find spencer_people_tracking_launch)/launch/tracking/freiburg_people_tracking.launch">
+		<arg name="fuse_detections" value="false"/>
         <arg name="rgbd" default="true"/>
         <arg name="laser_low_confidence_detections" default="false"/>
     </include>
