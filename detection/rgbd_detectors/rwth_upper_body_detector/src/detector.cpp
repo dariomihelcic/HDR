@@ -117,7 +117,7 @@ void Detector::ComputeFreespace(const Camera& camera,
             double distance_to_plane = plane_par_0*xj + plane_par_1*yj + plane_par_2*zj + plane_par_3;
 
             // Only accept points in upper_body height range (0.1m to 2.5m)
-            if(distance_to_plane < 2.5 && distance_to_plane > 0.1)
+            if(distance_to_plane < 2.1 && distance_to_plane > 0.1)
             {
                 double x = xj - min_x_;
                 double z = zj - min_z_;

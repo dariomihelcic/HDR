@@ -16,7 +16,7 @@
     <arg name="static_map" default="true"/>
     
     <arg name="loop" default="false"/>
-    <arg name="rate" default="0.3"/>
+    <arg name="rate" default="0.5"/>
 
     <arg name="visualization" default="true"/>
     <arg name="rviz_config_file" default="$(find spencer_people_tracking_launch)/rviz/tracking-rgbd-laser.rviz"  unless="$(arg ds)"/>
@@ -24,43 +24,14 @@
 
     <arg name="height_above_ground" default="1.6"/>
     <arg name="ds" default="false"/>
-	<arg name="v_ds" default="false"/>
 	<arg name="k31_ds" default="false"/>
-	 
-    <group if="$(arg v_ds)">	 
-		<remap from="/spencer/sensors/pose" to="/odom"/>
-		<node name="relay_odom" type="relay" pkg="topic_tools" 
-					args="/odom /spencer/sensors/odom"/>
-		<rosparam param="/spencer/perception_internal/people_detection/ground_plane/distance"
-							subst_value="true">$(arg height_above_ground)</rosparam>
-		<node name="tf_base_footprint" pkg="tf" type="static_transform_publisher" args="0 0 $(arg height_above_ground) 0 0 0 base_footprint rgbd_front_top_link 10"/>
-        <node name="tf_odom"           pkg="tf" type="static_transform_publisher" args="0 0 0 0 0 0 odom base_footprint 10"/>
-		<node name="tf_depth"         pkg="tf" type="static_transform_publisher" 
-			args="0 0 0 -1.570796 0 -1.570796 rgbd_front_top_link camera_depth_optical_frame 10"/>
-		<node name="tf_rbg"         pkg="tf" type="static_transform_publisher" 
-			args="0 0 0 0 0 0 rgbd_front_top_link camera_rgb_optical_frame 10"/>
-			
-		<node name="relay_depth" type="relay" pkg="topic_tools"
-					args="/spencer/sensors/camera/depth/image_raw
-								/spencer/sensors/rgbd_front_top/depth/image_raw"/>
-		<node name="relay_rgb" type="relay" pkg="topic_tools"
-					args="/spencer/sensors/camera/rgb/image_raw
-								/spencer/sensors/rgbd_front_top/rgb/image_raw"/>
-		<node name="relay_rgb_camera_info" type="relay" pkg="topic_tools"
-					args="/spencer/sensors/camera/rgb/camera_info 
-								/spencer/sensors/rgbd_front_top/rgb/camera_info"/>
-		<node name="relay_depth_camera_info" type="relay" pkg="topic_tools" 
-					args="/spencer/sensors/camera/depth/camera_info 
-								/spencer/sensors/rgbd_front_top/depth/camera_info"/>	
-    </group>	
+	
+	<remap if="$(arg use_upper_body_detector)" from="/spencer/perception/detected_persons" to="/spencer/perception_internal/detected_persons/rgbd_front_top/upper_body"/>
 	
 	<remap if="$(arg k31_ds)" from="/spencer/sensors/camera/rgb/image_color" to="/spencer/sensors/rgbd_front_top/rgb/image_rect_color"/>
 	<remap if="$(arg k31_ds)" from="/spencer/sensors/camera/rgb/camera_info" to="/spencer/sensors/rgbd_front_top/rgb/camera_info"/>
 	<remap if="$(arg k31_ds)" from="/spencer/sensors/camera/depth_registered/camera_info" to="/spencer/sensors/rgbd_front_top/depth_registered/camera_info"/>
 	<remap if="$(arg k31_ds)" from="/spencer/sensors/camera/depth_registered/image" to="/spencer/sensors/rgbd_front_top/depth_registered/image_raw"/>
-	
-	<remap if="$(arg use_upper_body_detector)" from="/spencer/perception/detected_persons" to="/spencer/perception_internal/detected_persons/rgbd_front_top/upper_body"/>
-	
 	
 	<node name="monitored_safe_stop" type="monitored_safe_stop.py" pkg="spencer_detected_person_association"/>
 	<group if="$(arg k31_ds)">	 
@@ -89,11 +60,6 @@
 		<node name="relay_depth" type="relay" pkg="topic_tools"
 					args="/spencer/sensors/rgbd_front_top/depth_registered/image_raw
 								/spencer/sensors/rgbd_front_top/depth/image_rect"/>
-		
-		<!--WARNING::wrong ecoding-->
-		<!--node name="relay_depth_raw" type="relay" pkg="topic_tools"
-					args="/spencer/sensors/rgbd_front_top/depth_registered/image_raw
-								/spencer/sensors/rgbd_front_top/depth/image_raw"/-->
 								
 		<node name="relay_rgb_color_image" type="relay" pkg="topic_tools"
 					args="/spencer/sensors/rgbd_front_top/rgb/image_rect_color 
@@ -101,8 +67,7 @@
 								
 		<node name="relay_depth_camera_info" type="relay" pkg="topic_tools" 
 					args="/spencer/sensors/rgbd_front_top/depth_registered/camera_info 
-								/spencer/sensors/rgbd_front_top/depth/camera_info"/>
-							
+								/spencer/sensors/rgbd_front_top/depth/camera_info"/>						
 		
 	</group>	
 	
@@ -111,7 +76,6 @@
 	<remap if="$(arg ds)" from="/spencer/sensors/camera/rgb/camera_info" to="/spencer/sensors/rgbd_front_top/rgb/camera_info"/>	
 	<remap if="$(arg ds)" from="/spencer/sensors/camera/rgb/camera_info" to="/spencer/sensors/rgbd_front_top/depth/camera_info"/>
 
-    <!-- added-->
     <group if="$(arg ds)">
 		
 		<rosparam param="/spencer/perception_internal/people_detection/ground_plane/distance"
@@ -128,24 +92,16 @@
 		<!-- Set up dummy transforms into an imaginary robot and odom frame -->
 		<node name="tf_openni"         pkg="tf" type="static_transform_publisher" 
 					args="0 0 0 -1.570796 0 -1.570796 rgbd_front_top_link openni_rgb_optical_frame 10"/>
-		<node name="tf_base_footprint" pkg="tf" type="static_transform_publisher" 
+		<node name="tf_rgbd" pkg="tf" type="static_transform_publisher" 
 					args="0 0 $(arg height_above_ground) 0 0 0 base_footprint rgbd_front_top_link 10"/>	
 		<node name="tf_map"         pkg="tf" type="static_transform_publisher" 
 					args="0 0 0 0 0 0 1 base_footprint map 10"/>
 		<node name="tf_odom"           pkg="tf" type="static_transform_publisher" 
 					args="0 0 0 0 0 0 odom base_footprint 10"/>
-		
-		<!--add robot simulation-->
-		<node name="tf_robot" pkg="tf" type="static_transform_publisher" args="2 -2 0 1.570796 0 0 map katana_base_link 10"/>
-		<param name="robot_description" command="$(find xacro)/xacro --inorder '$(find spencer_people_tracking_launch)/launch/robot_desc.urdf.xacro'"/>
-		<param name="use_gui" value="true"/>
-  		<node name="joint_state_publisher" pkg="joint_state_publisher" type="joint_state_publisher"/>
-  		<node name="robot_state_publisher" pkg="robot_state_publisher" type="state_publisher"/>
-		
-		<!--TODO::write postions to file (location /.ros/)-->
+	
 		<!--node name="dump_positions" pkg="spencer_detected_person_association" type="dump_detection_positions.py" /-->
 		<!--Monitored safe stop-->
-		<node name="monitored_safe_stop" type="monitored_safe_stop.py" pkg="spencer_detected_person_association"/>
+		<!--node name="monitored_safe_stop" type="monitored_safe_stop.py" pkg="spencer_detected_person_association"-->
 		
     </group>	
 

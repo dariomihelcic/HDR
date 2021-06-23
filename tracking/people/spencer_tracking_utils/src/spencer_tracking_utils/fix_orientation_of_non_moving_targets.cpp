@@ -154,7 +154,7 @@ int main(int argc, char **argv)
     ros::NodeHandle privateHandle("~");
 
     g_deleteUnseenTracksAfterNumFrames = 10;
-    g_minRequiredAvgVelocity = 0.15;
+    g_minRequiredAvgVelocity = 0.05;
 
     privateHandle.getParam("delete_unseen_tracks_after_num_frames", g_deleteUnseenTracksAfterNumFrames);
     privateHandle.getParam("min_required_avg_velocity", g_minRequiredAvgVelocity);

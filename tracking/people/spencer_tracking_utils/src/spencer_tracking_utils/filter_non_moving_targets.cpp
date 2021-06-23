@@ -80,7 +80,7 @@ void newTrackedPersonsReceived(const TrackedPersons::ConstPtr& trackedPersons) {
         // Mark track as "seen"
         unseenTrackIds.erase(trackedPerson.track_id);
 
-        // Check if we "know" the track (from its ID)
+        // Check if we "know" the track (from its ID)+
         std::map<track_id, TrackRecord>::iterator trackRecordIt = g_trackRecords.find(trackedPerson.track_id);
         if(trackRecordIt == g_trackRecords.end()) {
             // Track is seen for the first time

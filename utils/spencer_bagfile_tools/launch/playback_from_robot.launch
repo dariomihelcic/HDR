@@ -31,7 +31,8 @@
   <!-- Visualization options -->
   <arg name="visualization" default="true" /> <!-- whether to run RViz with provided config, or not -->
   <arg name="panoramas" default="false"/>
-  <arg name="relay_rgbd_for_visualization" default="true"/>
+  <arg name="relay_rgbd_for_visualization" default="true" if="$(arg visualization)"/>
+  <arg name="relay_rgbd_for_visualization" default="false" unless="$(arg visualization)"/>
   <arg name="rviz_config_file" default="$(find spencer_bagfile_tools)/launch/components/visualization_robot.rviz"/> <!-- configuration file for RViz to use, if visualization is enabled -->
 
   <arg name="rosbag_play_args" default="--clock --queue=5 --delay=0 --start=$(arg start) --duration=$(arg duration) --rate=$(arg rate)" /> <!-- extra arguments used to play back the bagfile -->

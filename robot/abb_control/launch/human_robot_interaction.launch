@@ -1,0 +1,3 @@
+<launch>
+	<node pkg="abb_control" name="human_robot_interaction" type="human_robot_interaction_node" output="screen"/>
+</launch>

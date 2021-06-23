@@ -1,0 +1,4 @@
+<launch>
+	<include file="$(find abb_irb2400_moveit_config)/launch/moveit_planning_execution.launch" />
+	<node pkg="abb_control" name="testing" type="testing_node" output="screen"/>
+</launch>

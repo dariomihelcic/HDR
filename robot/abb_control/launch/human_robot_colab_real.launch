@@ -1,0 +1,9 @@
+<launch>
+	<include file="$(find abb_irb2400_moveit_config)/launch/moveit_planning_execution.launch">
+		<arg name="sim" default="false"/>
+		<arg name="robot_ip" default="172.16.106.185"/>
+	</include>
+	
+	<!--node pkg="abb_control" name="move_robot_constrained" type="move_robot.py" output="screen"/-->
+	<node pkg="abb_control" name="human_robot_interaction" type="human_robot_interaction_node" output="screen"/>
+</launch>

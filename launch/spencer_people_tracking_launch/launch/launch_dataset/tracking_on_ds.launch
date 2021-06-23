@@ -15,7 +15,7 @@
 
     <arg name="static_map" default="true"/>
     
-    <arg name="loop" default="true"/>
+    <arg name="loop" default="false"/>
     <arg name="rate" default="0.3"/>
 
     <arg name="visualization" default="true"/>
@@ -30,7 +30,7 @@
 	
 	<remap if="$(arg use_upper_body_detector)" from="/spencer/perception/detected_persons" to="/spencer/perception_internal/detected_persons/rgbd_front_top/upper_body"/>
 	
-	<node name="monitored_safe_stop" type="monitored_safe_stop.py" pkg="spencer_detected_person_association"/>
+	<!--node name="monitored_safe_stop" type="monitored_safe_stop.py" pkg="spencer_detected_person_association"/-->
 	<group>	 
 		<remap from="/spencer/sensors/pose" to="/odom"/>
 		<node name="relay_odom" type="relay" pkg="topic_tools" 
@@ -123,6 +123,6 @@
     </group>
 
     <!-- Group tracking -->
-    <include file="$(find spencer_people_tracking_launch)/launch/tracking/group_tracking.launch"/> 
+    <!--include file="$(find spencer_people_tracking_launch)/launch/tracking/group_tracking.launch"/--> 
 
 </launch>
