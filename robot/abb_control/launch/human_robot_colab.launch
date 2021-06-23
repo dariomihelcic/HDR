@@ -1,6 +1,0 @@
-<launch>
-	<include file="$(find abb_irb2400_moveit_config)/launch/moveit_planning_execution.launch" />
-
-	<!--node pkg="abb_control" name="move_robot_constrained" type="move_robot.py" output="screen"/-->
-	<node pkg="abb_control" name="human_robot_interaction" type="human_robot_interaction_node" output="screen"/>
-</launch>

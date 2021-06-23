@@ -79,7 +79,6 @@ namespace RobotControl {
 		if (trackSpeed_x != 0 || trackSpeed_y != 0){
 			trackSpeed = sqrtf(pow(trackSpeed_x,2) + pow(trackSpeed_y,2));
 		}
-
 		if (trackSpeed >= 0.1 && trackSpeed < 1.0){
 			robotEnvelope = 1.1*robotRadius;
 		}
@@ -106,7 +105,6 @@ namespace RobotControl {
 
 				if (fabsf(alpha-beta) <= gamma){
 					stopMovement = true;
-					ROS_WARN("############### alpha-beta, gamma : %.2f, %.2f", (alpha-beta),gamma);
 				}
 			}		
 		}
@@ -117,7 +115,6 @@ namespace RobotControl {
 				resumePlaning = false;
 				ROS_WARN("Stop condition met, robot motion disabled!");
 			}
-			//ROS_WARN("####################### envelope - distance = %.2f", (robotEnvelope-trackDistance));
 		
 			stop_timer.stop();
 			stop_timer.start();
@@ -132,7 +129,6 @@ namespace RobotControl {
 				newVelocityFactor = 0.075; 
 			}
 			if (newVelocityFactor != velocityFactor){
-				// TODO:: create new timer to reset velocity constraint
 				if (!speed_timer.hasStarted()){
 					ROS_WARN("Max velocity changed, replaning movement!");
 				}
@@ -145,82 +141,6 @@ namespace RobotControl {
 		}
 	} // robotControlStrategy()
 
-/**
-	// robotControlStrategy()
-	void HumanRobotInteraction::robotControlStrategy(float trackPosition_x, float trackPosition_y, float trackSpeed_x, float trackSpeed_y){
-		geometry_msgs::Pose pose_buff;
-		float trackVRadial, trackVTangential = 0;
-		float trackSpeed, trackDistance = 0;
-		float alpha, beta = 0;
-		float maxVelocityFactor = 0;
-		float robotEnvelope = robotRadius;
-		stopMovement = false;
-
-
-		if (trackSpeed_x != 0 || trackSpeed_y != 0){
-			trackSpeed = sqrtf(pow(trackSpeed_x,2) + pow(trackSpeed_y,2));
-			
-		}
-		if (trackSpeed >= 0.1 && trackSpeed < 1.0){
-			robotEnvelope = 1.1*robotRadius;
-		}
-		else if (trackSpeed >= 1.0){
-			robotEnvelope = 1.5*robotRadius;
-		}
-
-		trackDistance = sqrtf(pow(robotPosition_x - trackPosition_x,2) 
-								+ pow(robotPosition_y - trackPosition_y,2));
-
-		// stop conditions
-		if (trackDistance <= robotEnvelope){
-			stopMovement = true;
-		}
-		else { 
-			if (trackSpeed >= 2){
-				stopMovement = true;
-			}
-			else {
-				alpha = atan2f(trackSpeed_y, trackSpeed_x);
-				beta = atan2f((robotPosition_y-trackPosition_y),
-							(robotPosition_x-trackPosition_x));
-
-				trackVRadial = trackSpeed*cosf(alpha - beta);
-				ROS_WARN("################################## %.2f %.2f", alpha, beta);
-				ROS_WARN("################################## velocity = %.2f", trackVRadial);
-
-				if (trackVRadial > 0){
-					stopMovement = false;
-				}
-			}		
-		}
-
-		if (stopMovement){
-			move_group.stop();
-			resumePlaning = false;
-			ROS_WARN("Robot envelope breached, motion disabled!");
-			//ROS_WARN("####################### envelope - distance = %.2f", (robotEnvelope-trackDistance));
-		
-			periodic_timer.stop();
-			periodic_timer.start();
-			return;
-		}
-		else if (!periodic_timer.hasStarted()){
-			if (trackSpeed < 0.1){
-				maxVelocityFactor = 0.5;
-			}
-			else {
-				trackVTangential = trackSpeed*sinf(alpha - beta);
-				maxVelocityFactor = 0.5*fabsf(trackVTangential); 
-			}
-			// TODO:: create new timer to reset velocity constraint
-			ROS_WARN("Max velocity reduced, replaning movement!");
-			move_group.setMaxVelocityScalingFactor(maxVelocityFactor);
-			move_group.stop();
-			replanMovement = true;
-		}
-
-	} // robotControlStrategy()
-**/
 
 	// timerCallback()
 	void HumanRobotInteraction::stopTimer(const ros::TimerEvent &event) {
@@ -276,10 +196,8 @@ namespace RobotControl {
 						continue;
 					}
 				}
-				ROS_WARN("######################### velocityFactor: %.2f", velocityFactor);
 				move_group.setMaxVelocityScalingFactor(velocityFactor);
 				move_group.plan(move_plan);
-				ROS_WARN("Time to generate path: %f", move_plan.planning_time_);
 				move_group.execute(move_plan);
 			}
 		}

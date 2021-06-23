@@ -1,0 +1,44 @@
+{
+  "configurations": [
+    {
+      "browse": {
+        "databaseFilename": "",
+        "limitSymbolsToIncludedHeaders": true
+      },
+      "includePath": [
+        "/home/dario/Code/spencer-people-tracking-ws/devel/include/**",
+        "/opt/ros/kinetic/include/**",
+        "/home/dario/Code/spencer-people-tracking-ws/src/spencer_people_tracking/robot/abb_control/include/**",
+        "/home/dario/Code/spencer-people-tracking-ws/src/spencer_people_tracking/robot/ABB_IRB_2400L/abb_driver/include/**",
+        "/home/dario/Code/spencer-people-tracking-ws/src/spencer_people_tracking/utils/navigation/amcl/include/**",
+        "/home/dario/Code/spencer-people-tracking-ws/src/spencer_people_tracking/utils/navigation/base_local_planner/include/**",
+        "/home/dario/Code/spencer-people-tracking-ws/src/spencer_people_tracking/utils/navigation/carrot_planner/include/**",
+        "/home/dario/Code/spencer-people-tracking-ws/src/spencer_people_tracking/utils/navigation/clear_costmap_recovery/include/**",
+        "/home/dario/Code/spencer-people-tracking-ws/src/spencer_people_tracking/utils/navigation/costmap_2d/include/**",
+        "/home/dario/Code/spencer-people-tracking-ws/src/spencer_people_tracking/utils/depthimage_to_laserscan/include/**",
+        "/home/dario/Code/spencer-people-tracking-ws/src/spencer_people_tracking/utils/navigation/dwa_local_planner/include/**",
+        "/home/dario/Code/spencer-people-tracking-ws/src/spencer_people_tracking/utils/navigation/global_planner/include/**",
+        "/home/dario/Code/spencer-people-tracking-ws/src/spencer_people_tracking/utils/navigation/map_server/include/**",
+        "/home/dario/Code/spencer-people-tracking-ws/src/spencer_people_tracking/utils/navigation/move_base/include/**",
+        "/home/dario/Code/spencer-people-tracking-ws/src/spencer_people_tracking/utils/navigation/move_slow_and_clear/include/**",
+        "/home/dario/Code/spencer-people-tracking-ws/src/spencer_people_tracking/utils/navigation/nav_core/include/**",
+        "/home/dario/Code/spencer-people-tracking-ws/src/spencer_people_tracking/utils/navigation/navfn/include/**",
+        "/home/dario/Code/spencer-people-tracking-ws/src/spencer_people_tracking/utils/openslam_gmapping/include/**",
+        "/home/dario/Code/spencer-people-tracking-ws/src/spencer_people_tracking/utils/navigation/robot_pose_ekf/include/**",
+        "/home/dario/Code/spencer-people-tracking-ws/src/spencer_people_tracking/utils/navigation/rotate_recovery/include/**",
+        "/home/dario/Code/spencer-people-tracking-ws/src/spencer_people_tracking/detection/monocular_detectors/rwth_ground_hog/include/**",
+        "/home/dario/Code/spencer-people-tracking-ws/src/spencer_people_tracking/utils/rwth_ground_plane/include/**",
+        "/home/dario/Code/spencer-people-tracking-ws/src/spencer_people_tracking/detection/rgbd_detectors/rwth_upper_body_detector/include/**",
+        "/home/dario/Code/spencer-people-tracking-ws/src/spencer_people_tracking/utils/spencer_diagnostics/include/**",
+        "/home/dario/Code/spencer-people-tracking-ws/src/spencer_people_tracking/detection/laser_detectors/srl_laser_detectors/include/**",
+        "/home/dario/Code/spencer-people-tracking-ws/src/spencer_people_tracking/detection/laser_detectors/srl_laser_features/include/**",
+        "/home/dario/Code/spencer-people-tracking-ws/src/spencer_people_tracking/detection/laser_detectors/srl_laser_segmentation/include/**",
+        "/home/dario/Code/spencer-people-tracking-ws/src/spencer_people_tracking/tracking/people/srl_nearest_neighbor_tracker/include/**",
+        "/home/dario/Code/spencer-people-tracking-ws/src/spencer_people_tracking/utils/navigation/voxel_grid/include/**",
+        "/usr/include/**"
+      ],
+      "name": "ROS"
+    }
+  ],
+  "version": 4
+}
